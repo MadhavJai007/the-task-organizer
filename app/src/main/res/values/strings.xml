@@ -1,3 +1,6 @@
 <resources>
     <string name="app_name">TaskOrganizaer</string>
+    <string name="app_title">Tasks</string>
+    <string name="built_with_desc">Built with Kotlin, Jetpack Compose, RoomDB in an MVVM architecture</string>
+    <string name="app_desc">A simple to do list / task organizer app.</string>
 </resources>

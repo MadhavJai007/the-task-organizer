@@ -68,19 +68,28 @@ fun AboutScreen(
                     modifier = Modifier.fillMaxWidth(),
                     color = MaterialTheme.colorScheme.onSurface,
                     textAlign = TextAlign.Center,
-                    text = "Tasks",
+                    text = stringResource(R.string.app_title),
 //                    fontFamily = FontFamily(Font(R.font.playfair_display_regular)),
                     fontSize = 40.sp
                 )
                 Spacer(modifier = Modifier.height(40.dp))
 
                 Text(
-                    text = "About me",
+                    text = stringResource(R.string.app_desc),
                     textAlign = TextAlign.Center,
                     color = MaterialTheme.colorScheme.onSurface,
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(10.dp, 0.dp),
+//                    fontFamily = FontFamily(Font(R.font.playfair_display_regular))
+                )
+                Text(
+                    text = stringResource(R.string.built_with_desc),
+                    textAlign = TextAlign.Center,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(10.dp, 10.dp),
 //                    fontFamily = FontFamily(Font(R.font.playfair_display_regular))
                 )
                 Spacer(modifier = Modifier.height(100.dp))
@@ -90,7 +99,7 @@ fun AboutScreen(
                         .fillMaxWidth()
                         .height(60.dp),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = Color.Black,
+//                        containerColor = Color.Black,
                         contentColor = Color.White),
                     shape = RoundedCornerShape(20.dp),
 

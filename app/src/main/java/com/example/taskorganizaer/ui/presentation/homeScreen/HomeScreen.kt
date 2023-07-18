@@ -78,7 +78,7 @@ fun HomeScreen(
             LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(0.dp, 20.dp, 0.dp, 0.dp)
+                    .padding(0.dp, 70.dp, 0.dp, 0.dp)
             ) {
                 if (notesModel.isNotEmpty()) {
                     items(notesModel) { noteModel ->

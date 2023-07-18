@@ -27,7 +27,7 @@ fun HomeTopBar(
     CenterAlignedTopAppBar(
         title = {
             Text(
-                "Journal", //stringResource(R.string.app_name),
+                stringResource(R.string.app_title),
 //                fontFamily = FontFamily(Font(R.font.playfair_display_regular)),
             )
         },
