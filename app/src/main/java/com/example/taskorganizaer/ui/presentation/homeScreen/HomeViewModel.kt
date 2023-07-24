@@ -6,25 +6,25 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.taskorganizaer.data.models.NoteModel
-import com.example.taskorganizaer.domain.NoteRepository
+import com.example.taskorganizaer.data.models.TaskModel
+import com.example.taskorganizaer.domain.TaskRepository
 import kotlinx.coroutines.launch
 
 class HomeViewModel(application: Application) : AndroidViewModel(application) {
-    private val noteRepo = NoteRepository(application)
-    var notesModel by mutableStateOf(emptyList<NoteModel>())
+    private val taskRepo = TaskRepository(application)
+    var tasksModel by mutableStateOf(emptyList<TaskModel>())
 
-    fun getAllNotes() {
+    fun getAllTasks() {
         viewModelScope.launch {
-            noteRepo.getAllNotesFromRoom().collect { response ->
-                notesModel = response
+            taskRepo.getAllTasksFromRoom().collect { response ->
+                tasksModel = response
             }
         }
     }
 
-    fun deleteNote(noteModel: NoteModel) {
+    fun deleteTask(taskModel: TaskModel) {
         viewModelScope.launch {
-            noteRepo.deleteNoteFromRoom(noteModel)
+            taskRepo.deleteTaskFromRoom(taskModel)
         }
     }
 }

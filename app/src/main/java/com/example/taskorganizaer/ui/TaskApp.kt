@@ -9,8 +9,8 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.taskorganizaer.ui.presentation.aboutScreen.AboutScreen
 import com.example.taskorganizaer.ui.presentation.homeScreen.HomeScreen
-import com.example.taskorganizaer.ui.presentation.updateNoteScreen.UpdateNoteScreen
-import com.exmaple.taskorganizaer.ui.presentation.addNoteScreen.AddNoteScreen
+import com.example.taskorganizaer.ui.presentation.updateTaskScreen.UpdateTaskScreen
+import com.exmaple.taskorganizaer.ui.presentation.addNoteScreen.AddTaskScreen
 
 @Composable
 fun TaskApp(
@@ -22,25 +22,25 @@ fun TaskApp(
     ) {
         composable(route = TaskAppScreen.Home.name) {
             HomeScreen(
-                onFabClicked = { navController.navigate(TaskAppScreen.AddNotes.name) },
-                navigateToUpdateNoteScreen = { noteId ->
-                    navController.navigate("${TaskAppScreen.UpdateNotes.name}/$noteId")
+                onFabClicked = { navController.navigate(TaskAppScreen.AddTasks.name) },
+                navigateToUpdateTaskScreen = { taskId ->
+                    navController.navigate("${TaskAppScreen.UpdateTasks.name}/$taskId")
                 },
                 navigateToAboutScreen = { navController.navigate(TaskAppScreen.About.name) }
             )
         }
         composable(
-            route = "${TaskAppScreen.UpdateNotes.name}/{noteId}",
-            arguments = listOf(navArgument("noteId") { type = NavType.IntType })
+            route = "${TaskAppScreen.UpdateTasks.name}/{taskId}",
+            arguments = listOf(navArgument("taskId") { type = NavType.IntType })
         ) { backStackEntry ->
-            val noteId = backStackEntry.arguments?.getInt("noteId") ?: 0
-            UpdateNoteScreen(
-                noteId = noteId,
+            val taskId = backStackEntry.arguments?.getInt("taskId") ?: 0
+            UpdateTaskScreen(
+                taskId = taskId,
                 navigateBack = { navController.popBackStack() }
             )
         }
-        composable(TaskAppScreen.AddNotes.name) {
-            AddNoteScreen(navigateBack = { navController.popBackStack() })
+        composable(TaskAppScreen.AddTasks.name) {
+            AddTaskScreen(navigateBack = { navController.popBackStack() })
         }
         composable(TaskAppScreen.About.name) {
             AboutScreen(navigateBack = { navController.popBackStack() })

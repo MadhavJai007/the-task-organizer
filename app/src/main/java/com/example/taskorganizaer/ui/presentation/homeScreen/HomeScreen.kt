@@ -1,12 +1,8 @@
 package com.example.taskorganizaer.ui.presentation.homeScreen
 
 import android.util.Log
-import androidx.compose.animation.animateColorAsState
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -29,32 +25,28 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.scale
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.taskorganizaer.R
-import com.example.taskorganizaer.data.models.NoteModel
+import com.example.taskorganizaer.data.models.TaskModel
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
     onFabClicked: () -> Unit,
-    navigateToUpdateNoteScreen: (noteId: Int) -> Unit,
+    navigateToUpdateTaskScreen: (taskId: Int) -> Unit,
     navigateToAboutScreen: () -> Unit,
 ) {
     val viewModel: HomeViewModel = viewModel()
-    val notesModel = viewModel.notesModel
+    val tasksModel = viewModel.tasksModel
     LaunchedEffect(Unit) {
-        viewModel.getAllNotes()
+        viewModel.getAllTasks()
     }
     Scaffold(
         topBar = { HomeTopBar(navigateToAboutScreen) },
@@ -80,14 +72,14 @@ fun HomeScreen(
                     .fillMaxSize()
                     .padding(0.dp, 70.dp, 0.dp, 0.dp)
             ) {
-                if (notesModel.isNotEmpty()) {
-                    items(notesModel) { noteModel ->
+                if (tasksModel.isNotEmpty()) {
+                    items(tasksModel) { taskModel ->
 //                        NoteSwappable(noteModel, viewModel, navigateToUpdateNoteScreen)
-                        NotesCard(noteModel = noteModel, viewModel = viewModel, navigateToUpdateNoteScreen = navigateToUpdateNoteScreen)
+                        TaskCard(taskModel = taskModel, viewModel = viewModel, navigateToUpdateTaskScreen = navigateToUpdateTaskScreen)
                     }
                 } else {
                     item {
-                        ShowNoNotes()
+                        ShowTasks()
                     }
                 }
             }
@@ -147,7 +139,7 @@ fun HomeScreen(
 
 
 @Composable
-fun ShowNoNotes() {
+fun ShowTasks() {
     Column(modifier = Modifier
         .fillMaxSize()
         .padding(0.dp, 120.dp, 0.dp, 0.dp)) {
@@ -157,7 +149,7 @@ fun ShowNoNotes() {
             modifier = Modifier.fillMaxWidth(),
             alignment = Alignment.Center
         )
-        Text(text = "Your notes will show here",
+        Text(text = "Your tasks will show here",
             modifier = Modifier.fillMaxWidth(),
             textAlign = TextAlign.Center
         )
@@ -165,10 +157,10 @@ fun ShowNoNotes() {
 }
 
 @Composable
-fun NotesCard(
-    noteModel: NoteModel,
+fun TaskCard(
+    taskModel: TaskModel,
     viewModel: HomeViewModel,
-    navigateToUpdateNoteScreen: (noteId: Int) -> Unit,
+    navigateToUpdateTaskScreen: (taskId: Int) -> Unit,
 ) {
     Card(
         modifier = Modifier
@@ -176,7 +168,7 @@ fun NotesCard(
             .fillMaxWidth()
             .padding(20.dp, 5.dp)
             .clickable {
-                navigateToUpdateNoteScreen(noteModel.id)
+                navigateToUpdateTaskScreen(taskModel.id)
                 Log.i("HomeScreen", "onCardClicked")
             },
 //        backgroundColor = MaterialTheme.colorScheme.surface,
@@ -188,18 +180,18 @@ fun NotesCard(
             .padding(24.dp, 6.dp)
         ) {
             Text(
-                text = noteModel.title,
+                text = taskModel.title,
                 fontSize = 24.sp,
 //                fontFamily = FontFamily(Font(R.font.playfair_display_regular)),
 
                 )
             Text(
-                text = noteModel.notes,
+                text = taskModel.notes,
 //                fontFamily = FontFamily(Font(R.font.plus_jakarta_sans_regular)),
                 lineHeight = 17.sp
             )
         }
-        IconButton(onClick = { viewModel.deleteNote(noteModel) }) {
+        IconButton(onClick = { viewModel.deleteTask(taskModel) }) {
             Icon(
                 imageVector = Icons.Default.Delete,
                 contentDescription = "Delete task" )

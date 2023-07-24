@@ -3,8 +3,8 @@ package com.example.taskorganizaer.data.models
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-@Entity(tableName = "noteModel")
-data class NoteModel(
+@Entity(tableName = "taskModel")
+data class TaskModel(
     @PrimaryKey(autoGenerate = true)
     var id: Int,
     var title:String,
