@@ -1,4 +1,4 @@
-package com.exmaple.taskorganizaer.ui.presentation.addNoteScreen
+package com.exmaple.taskorganizaer.ui.presentation.addTaskScreen
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
@@ -12,7 +12,7 @@ class AddTaskViewModel(application: Application) : AndroidViewModel(application)
 
     fun insertNote(taskModel: TaskModel) {
         viewModelScope.launch {
-            taskRepo.insertTaskToRoom(taskModel)
+            taskRepo.upsertTaskInRoom(taskModel)
         }
     }
 }

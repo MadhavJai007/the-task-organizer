@@ -10,7 +10,7 @@ import androidx.navigation.navArgument
 import com.example.taskorganizaer.ui.presentation.aboutScreen.AboutScreen
 import com.example.taskorganizaer.ui.presentation.homeScreen.HomeScreen
 import com.example.taskorganizaer.ui.presentation.updateTaskScreen.UpdateTaskScreen
-import com.exmaple.taskorganizaer.ui.presentation.addNoteScreen.AddTaskScreen
+import com.exmaple.taskorganizaer.ui.presentation.addTaskScreen.AddTaskScreen
 
 @Composable
 fun TaskApp(

@@ -1,4 +1,4 @@
-package com.exmaple.taskorganizaer.ui.presentation.addNoteScreen
+package com.exmaple.taskorganizaer.ui.presentation.addTaskScreen
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack

@@ -25,7 +25,8 @@ class UpdateTaskViewModel(application: Application) : AndroidViewModel(applicati
 
     fun updateTasks(taskModel: TaskModel) {
         viewModelScope.launch {
-            taskRepo.updateTaskInRoom(taskModel)
+//            taskRepo.updateTaskInRoom(taskModel)
+            taskRepo.upsertTaskInRoom(taskModel)
         }
     }
 

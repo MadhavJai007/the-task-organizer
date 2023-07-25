@@ -6,6 +6,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
+import androidx.room.Upsert
 import com.example.taskorganizaer.data.models.TaskModel
 import kotlinx.coroutines.flow.Flow
 
@@ -26,5 +27,8 @@ interface TaskDao {
 
     @Delete
     suspend fun deleteTask(taskModel: TaskModel)
+
+    @Upsert
+    suspend fun upsertTask(taskModel: TaskModel)
 
 }

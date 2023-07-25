@@ -1,4 +1,4 @@
-package com.exmaple.taskorganizaer.ui.presentation.addNoteScreen
+package com.exmaple.taskorganizaer.ui.presentation.addTaskScreen
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight

@@ -19,4 +19,7 @@ class TaskRepository(application: Application) {
     suspend fun insertTaskToRoom(taskModel: TaskModel) = taskDao.insertTask(taskModel)
     suspend fun updateTaskInRoom(taskModel: TaskModel) = taskDao.updateTask(taskModel)
     suspend fun deleteTaskFromRoom(taskModel: TaskModel) = taskDao.deleteTask(taskModel)
+    suspend fun upsertTaskInRoom(taskModel: TaskModel) = taskDao.upsertTask(taskModel)
+
+
 }
