@@ -19,6 +19,16 @@ interface TaskDao {
     @Query("SELECT * FROM taskModel WHERE id = :taskId")
     fun getTaskById(taskId: Int): Flow<TaskModel>
 
+
+    @Query("SELECT * FROM taskModel ORDER BY id DESC")
+    fun sortTasksByIDDesc(): Flow<List<TaskModel>>
+
+    @Query("SELECT * FROM taskModel ORDER BY title ASC")
+    fun sortTasksByAlphaAsc(): Flow<List<TaskModel>>
+
+    @Query("SELECT * FROM taskModel ORDER BY title DESC")
+    fun sortTasksByAlphaDesc(): Flow<List<TaskModel>>
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertTask(taskModel: TaskModel)
 

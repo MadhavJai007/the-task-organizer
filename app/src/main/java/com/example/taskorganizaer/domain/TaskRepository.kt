@@ -14,8 +14,19 @@ class TaskRepository(application: Application) {
         taskDao = database.taskDao()
     }
 
-    fun getAllTasksFromRoom(): Flow<List<TaskModel>> = taskDao.getAllTasks()
+    fun getAllTasksByIDAsc(): Flow<List<TaskModel>> = taskDao.getAllTasks()
     fun getTaskByIdFromRoom(noteId: Int): Flow<TaskModel> = taskDao.getTaskById(noteId)
+
+
+    // sorting operations
+
+    fun sortTasksByIDDesc(): Flow<List<TaskModel>> = taskDao.sortTasksByIDDesc()
+
+    fun sortTasksByAlphaAsc(): Flow<List<TaskModel>> = taskDao.sortTasksByAlphaAsc()
+    fun sortTasksByAlphaDesc(): Flow<List<TaskModel>> = taskDao.sortTasksByAlphaDesc()
+
+
+    // CRUD operations
     suspend fun insertTaskToRoom(taskModel: TaskModel) = taskDao.insertTask(taskModel)
     suspend fun updateTaskInRoom(taskModel: TaskModel) = taskDao.updateTask(taskModel)
     suspend fun deleteTaskFromRoom(taskModel: TaskModel) = taskDao.deleteTask(taskModel)

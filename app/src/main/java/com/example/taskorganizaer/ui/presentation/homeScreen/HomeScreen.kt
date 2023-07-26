@@ -33,6 +33,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.taskorganizaer.R
+import com.example.taskorganizaer.data.models.SortTypes
 import com.example.taskorganizaer.data.models.TaskModel
 
 
@@ -43,13 +44,17 @@ fun HomeScreen(
     navigateToUpdateTaskScreen: (taskId: Int) -> Unit,
     navigateToAboutScreen: () -> Unit,
 ) {
-    val viewModel: HomeViewModel = viewModel()
-    val tasksModel = viewModel.tasksModel
+    val homeViewModel: HomeViewModel = viewModel()
+    val tasks = homeViewModel.tasks
     LaunchedEffect(Unit) {
-        viewModel.getAllTasks()
+        homeViewModel.sortTasks(SortTypes.TITLE_ASC)
+//        viewModel.getAllTasks()
     }
     Scaffold(
-        topBar = { HomeTopBar(navigateToAboutScreen) },
+        topBar = { HomeTopBar(
+            navigateToAboutScreen = navigateToAboutScreen,
+            homeViewModel = homeViewModel
+        ) },
         floatingActionButton = {
             FloatingActionButton(
                 modifier = Modifier.padding(0.dp, 0.dp, 20.dp, 32.dp),
@@ -72,10 +77,10 @@ fun HomeScreen(
                     .fillMaxSize()
                     .padding(0.dp, 70.dp, 0.dp, 0.dp)
             ) {
-                if (tasksModel.isNotEmpty()) {
-                    items(tasksModel) { taskModel ->
+                if (tasks.isNotEmpty()) {
+                    items(tasks) { taskModel ->
 //                        NoteSwappable(noteModel, viewModel, navigateToUpdateNoteScreen)
-                        TaskCard(taskModel = taskModel, viewModel = viewModel, navigateToUpdateTaskScreen = navigateToUpdateTaskScreen)
+                        TaskCard(taskModel = taskModel, viewModel = homeViewModel, navigateToUpdateTaskScreen = navigateToUpdateTaskScreen)
                     }
                 } else {
                     item {
@@ -180,7 +185,7 @@ fun TaskCard(
             .padding(24.dp, 6.dp)
         ) {
             Text(
-                text = taskModel.title,
+                text = "ID:${taskModel.id}.  ${taskModel.title}",
                 fontSize = 24.sp,
 //                fontFamily = FontFamily(Font(R.font.playfair_display_regular)),
 
