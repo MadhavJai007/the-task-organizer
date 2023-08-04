@@ -83,11 +83,12 @@ fun HomeTopBar(
 
                     DropdownMenu(
                         expanded = sortMenuExpanded,
-                        onDismissRequest = { sortMenuExpanded = false }
+                        onDismissRequest = { sortMenuExpanded = false },
+
                     ) {
                         SortTypes.values().forEachIndexed{index, sortOption ->
                             DropdownMenuItem(
-                                text = {Text(text = sortOption.name)},
+                                text = {Text(text = sortOption.displayStr)},
                                 onClick = {
                                     selectedSort = sortOption
                                     sortMenuExpanded = false

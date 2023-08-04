@@ -30,6 +30,12 @@ class UpdateTaskViewModel(application: Application) : AndroidViewModel(applicati
         }
     }
 
+    fun deleteTask(taskModel: TaskModel){
+        viewModelScope.launch {
+            taskRepo.deleteTaskFromRoom(taskModel)
+        }
+    }
+
     fun updateTitle(title: String) {
         taskModel = taskModel.copy(title = title)
     }

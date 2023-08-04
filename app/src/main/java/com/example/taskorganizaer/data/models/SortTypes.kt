@@ -1,10 +1,10 @@
 package com.example.taskorganizaer.data.models
 
-enum class SortTypes {
-    BY_ID_ASC,
-    BY_ID_DESC,
-    TITLE_ASC,
-    TITLE_DESC,
+enum class SortTypes(val displayStr: String) {
+    BY_ID_ASC("ID Ascending"),
+    BY_ID_DESC("ID Descending"),
+    TITLE_ASC("Title Ascending"),
+    TITLE_DESC("Title Descending"),
 //    DEADLINE_ASC,
 //    DEADLINE_DESC,
 //    COMPLETED_ASC,

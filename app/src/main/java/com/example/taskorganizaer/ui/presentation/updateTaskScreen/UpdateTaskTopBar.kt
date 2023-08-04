@@ -3,6 +3,8 @@ package com.example.taskorganizaer.ui.presentation.updateTaskScreen
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -34,6 +36,16 @@ fun UpdateTaskTopBar(
             }
         },
         actions = {
+//            IconButton(onClick = {
+//                navigateBack()
+//                val task = TaskModel(taskId, title, note)
+//                viewModel.deleteTask(taskModel = task)
+//
+//            }) {
+//                Icon(
+//                    imageVector = Icons.Default.Delete,
+//                    contentDescription = "Delete task" )
+//            }
             IconButton(onClick = {
                 val updatedTask = TaskModel(taskId, title, note)
                 viewModel.updateTasks(updatedTask)
@@ -41,7 +53,7 @@ fun UpdateTaskTopBar(
             }) {
                 Icon(
                     Icons.Default.Check,
-                    contentDescription = "save")
+                    contentDescription = "save task")
             }
         }
     )

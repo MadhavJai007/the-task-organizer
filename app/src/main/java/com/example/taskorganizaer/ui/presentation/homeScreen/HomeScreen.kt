@@ -1,9 +1,19 @@
 package com.example.taskorganizaer.ui.presentation.homeScreen
 
 import android.util.Log
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.spring
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
@@ -13,9 +23,18 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.ExpandLess
+import androidx.compose.material.icons.filled.ExpandMore
+import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CardElevation
+import androidx.compose.material3.Divider
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FabPosition
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -25,8 +44,13 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -55,17 +79,28 @@ fun HomeScreen(
             navigateToAboutScreen = navigateToAboutScreen,
             homeViewModel = homeViewModel
         ) },
+//        bottomBar = {
+//            BottomAppBar (
+//                actions = {},
+//
+//            )
+//        },
         floatingActionButton = {
-            FloatingActionButton(
-                modifier = Modifier.padding(0.dp, 0.dp, 20.dp, 32.dp),
-                onClick = { onFabClicked() },
-                containerColor = MaterialTheme.colorScheme.secondaryContainer
-            ) {
-                Icon(
-                    Icons.Filled.Add,
-                    contentDescription = "add")
-            }
+            MoveableFAB(
+                onFabClicked = onFabClicked
+            )
+//            FloatingActionButton(
+//                modifier = Modifier,
+////                            .padding(0.dp, 0.dp, 20.dp, 32.dp),
+//                onClick = { onFabClicked() },
+//                containerColor = MaterialTheme.colorScheme.primary
+//            ) {
+//                Icon(
+//                    Icons.Filled.Add,
+//                    contentDescription = "add")
+//            }
         },
+        floatingActionButtonPosition = FabPosition.End
 //        backgroundColor = MaterialTheme.colorScheme.surface
     ) { padding ->
         Surface(
@@ -78,9 +113,15 @@ fun HomeScreen(
                     .padding(0.dp, 70.dp, 0.dp, 0.dp)
             ) {
                 if (tasks.isNotEmpty()) {
-                    items(tasks) { taskModel ->
+                    items(
+                        tasks
+                    ) { taskModel ->
 //                        NoteSwappable(noteModel, viewModel, navigateToUpdateNoteScreen)
-                        TaskCard(taskModel = taskModel, viewModel = homeViewModel, navigateToUpdateTaskScreen = navigateToUpdateTaskScreen)
+                        TaskCard(taskModel = taskModel, homeViewModel = homeViewModel, navigateToUpdateTaskScreen = navigateToUpdateTaskScreen)
+                        Divider(
+                            color = MaterialTheme.colorScheme.background,
+                            thickness = 8.dp
+                        )
                     }
                 } else {
                     item {
@@ -164,12 +205,25 @@ fun ShowTasks() {
 @Composable
 fun TaskCard(
     taskModel: TaskModel,
-    viewModel: HomeViewModel,
+    homeViewModel: HomeViewModel,
     navigateToUpdateTaskScreen: (taskId: Int) -> Unit,
 ) {
+
+    var moreActionsMenuExpanded by remember { mutableStateOf(false) }
+    var taskNotesExpanded by remember { mutableStateOf(false)}
+
+    // preview notes expand animation
+    val extraPadding by animateDpAsState(
+        targetValue = if(taskNotesExpanded) 12.dp else 8.dp,
+        label = "",
+        animationSpec = spring(
+            dampingRatio = Spring.DampingRatioHighBouncy,
+            stiffness = Spring.StiffnessLow
+        )
+    )
     Card(
         modifier = Modifier
-            .heightIn(0.dp, 188.dp)
+//            .heightIn(0.dp, 200.dp)
             .fillMaxWidth()
             .padding(20.dp, 5.dp)
             .clickable {
@@ -177,29 +231,88 @@ fun TaskCard(
                 Log.i("HomeScreen", "onCardClicked")
             },
 //        backgroundColor = MaterialTheme.colorScheme.surface,
-        shape = RoundedCornerShape(24.dp)
+        shape = RoundedCornerShape(18.dp),
+        border = BorderStroke(2.dp, MaterialTheme.colorScheme.secondary),
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = 8.dp,
+//            pressedElevation = 9.dp
+        )
     ) {
 
         Column(modifier = Modifier
             .fillMaxWidth()
-            .padding(24.dp, 6.dp)
+//            .padding(24.dp, 6.dp)
+            .padding(24.dp, extraPadding)
         ) {
-            Text(
-                text = "ID:${taskModel.id}.  ${taskModel.title}",
-                fontSize = 24.sp,
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ){
+                Text(
+                    text = "ID:${taskModel.id}.  ${taskModel.title}",
+                    modifier = Modifier
+                        .padding(top = 6.dp, bottom = 18.dp),
+                    fontSize = 24.sp,
 //                fontFamily = FontFamily(Font(R.font.playfair_display_regular)),
 
                 )
+                Box() {
+                    IconButton(onClick = { moreActionsMenuExpanded = true }) {
+                        Icon(
+                            imageVector = Icons.Default.MoreVert,
+                            contentDescription = "Delete task"
+                        )
+                    }
+                    DropdownMenu(
+                        expanded = moreActionsMenuExpanded,
+                        onDismissRequest = { moreActionsMenuExpanded = false })
+                    {
+                        DropdownMenuItem(
+                            text = {
+                                Text(text = "Delete")
+                            },
+                            onClick = {
+                                homeViewModel.deleteTask(taskModel)
+                                moreActionsMenuExpanded = false
+                            }
+                        )
+                    }
+                }
+            }
+
             Text(
-                text = taskModel.notes,
+                text = if (taskNotesExpanded)
+                    taskModel.notes
+                else
+                    if(taskModel.notes.length > 70)
+                        taskModel.notes.dropLast(taskModel.notes.length - 70) + "..."
+                    else
+                        taskModel.notes ,
+                modifier = Modifier
+                    .padding(bottom = 12.dp),
 //                fontFamily = FontFamily(Font(R.font.plus_jakarta_sans_regular)),
-                lineHeight = 17.sp
+                lineHeight = 18.sp
             )
+            if(taskModel.notes.length >70)
+                Row(
+                    modifier = Modifier
+                ){
+                    Spacer(
+                        modifier = Modifier
+                            .weight(1f)
+                    )
+                    IconButton(
+                        onClick = { taskNotesExpanded = !taskNotesExpanded }
+                    ) {
+                        Icon(
+                            if(taskNotesExpanded) Icons.Default.ExpandLess else Icons.Default.ExpandMore,
+                            contentDescription = "Expand notes section"
+                        )
+                    }
+                }
+
         }
-        IconButton(onClick = { viewModel.deleteTask(taskModel) }) {
-            Icon(
-                imageVector = Icons.Default.Delete,
-                contentDescription = "Delete task" )
-        }
+
     }
 }
