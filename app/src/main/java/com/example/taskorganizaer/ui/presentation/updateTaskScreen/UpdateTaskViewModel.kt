@@ -9,11 +9,12 @@ import androidx.lifecycle.viewModelScope
 import com.example.taskorganizaer.data.models.TaskModel
 import com.example.taskorganizaer.domain.TaskRepository
 import kotlinx.coroutines.launch
+import java.time.LocalDateTime
 
 class UpdateTaskViewModel(application: Application) : AndroidViewModel(application) {
 
     private val taskRepo = TaskRepository(application)
-    var taskModel by mutableStateOf(TaskModel(0, "", ""))
+    var taskModel by mutableStateOf(TaskModel(0, "", "" , LocalDateTime.now() ))
 
     fun getTaskById(noteId: Int) {
         viewModelScope.launch {

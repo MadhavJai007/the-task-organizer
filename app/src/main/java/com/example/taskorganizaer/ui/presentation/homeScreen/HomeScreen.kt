@@ -50,6 +50,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
@@ -89,16 +90,6 @@ fun HomeScreen(
             MoveableFAB(
                 onFabClicked = onFabClicked
             )
-//            FloatingActionButton(
-//                modifier = Modifier,
-////                            .padding(0.dp, 0.dp, 20.dp, 32.dp),
-//                onClick = { onFabClicked() },
-//                containerColor = MaterialTheme.colorScheme.primary
-//            ) {
-//                Icon(
-//                    Icons.Filled.Add,
-//                    contentDescription = "add")
-//            }
         },
         floatingActionButtonPosition = FabPosition.End
 //        backgroundColor = MaterialTheme.colorScheme.surface
@@ -212,6 +203,9 @@ fun TaskCard(
     var moreActionsMenuExpanded by remember { mutableStateOf(false) }
     var taskNotesExpanded by remember { mutableStateOf(false)}
 
+    val notePreviewMaxLength: Int = 70
+
+
     // preview notes expand animation
     val extraPadding by animateDpAsState(
         targetValue = if(taskNotesExpanded) 12.dp else 8.dp,
@@ -244,24 +238,31 @@ fun TaskCard(
 //            .padding(24.dp, 6.dp)
             .padding(24.dp, extraPadding)
         ) {
-            Row(
+            Box(
                 modifier = Modifier
                     .fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
+//                horizontalArrangement = Arrangement.SpaceBetween
+//                contentAlignment = Alignment.TopEnd
             ){
                 Text(
-                    text = "ID:${taskModel.id}.  ${taskModel.title}",
+                    text = "ID:${taskModel.id}.  ${if (taskModel.title == "") "Untitled" else taskModel.title}",
                     modifier = Modifier
-                        .padding(top = 6.dp, bottom = 18.dp),
+                        .padding(top = 6.dp, bottom = 18.dp)
+                        .alpha(if (taskModel.title == "") 0.7f else 1f),
                     fontSize = 24.sp,
 //                fontFamily = FontFamily(Font(R.font.playfair_display_regular)),
 
                 )
-                Box() {
+                Box(
+//                    contentAlignment = Alignment.TopEnd,
+                    modifier = Modifier
+                        .align(Alignment.TopEnd)
+//                        .weight(1f)
+                ) {
                     IconButton(onClick = { moreActionsMenuExpanded = true }) {
                         Icon(
                             imageVector = Icons.Default.MoreVert,
-                            contentDescription = "Delete task"
+                            contentDescription = "Task actions dropdown menu"
                         )
                     }
                     DropdownMenu(
@@ -285,8 +286,10 @@ fun TaskCard(
                 text = if (taskNotesExpanded)
                     taskModel.notes
                 else
-                    if(taskModel.notes.length > 70)
-                        taskModel.notes.dropLast(taskModel.notes.length - 70) + "..."
+                    if(taskModel.notes.length > notePreviewMaxLength)
+                        taskModel.notes.dropLast(
+                            taskModel.notes.length - notePreviewMaxLength
+                        ) + "..."
                     else
                         taskModel.notes ,
                 modifier = Modifier
@@ -294,13 +297,28 @@ fun TaskCard(
 //                fontFamily = FontFamily(Font(R.font.plus_jakarta_sans_regular)),
                 lineHeight = 18.sp
             )
-            if(taskModel.notes.length >70)
+            if(taskModel.notes.length > notePreviewMaxLength)
                 Row(
                     modifier = Modifier
                 ){
-                    Spacer(
+//                    Spacer(
+//                        modifier = Modifier
+//                            .weight(1f)
+//                    )
+                    Text(
+                        text = if(taskModel.dateModified != null) {
+                            "Last edited: ${taskModel.dateModified.dayOfMonth} ${taskModel.dateModified.month} ${taskModel.dateModified.year}, ${taskModel.dateModified.hour}:${taskModel.dateModified.minute}".trimIndent()
+                        } else {
+                            "Added: ${taskModel.dateCreated.dayOfMonth} ${taskModel.dateCreated.month} ${taskModel.dateCreated.year}, ${taskModel.dateCreated.hour}:${taskModel.dateCreated.minute}".trimIndent()
+                        },
                         modifier = Modifier
                             .weight(1f)
+//                            .background(Color.Magenta)
+                            .padding(top=16.dp)
+                        ,
+
+                        fontSize = 10.sp,
+
                     )
                     IconButton(
                         onClick = { taskNotesExpanded = !taskNotesExpanded }

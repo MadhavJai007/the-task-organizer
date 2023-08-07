@@ -3,9 +3,12 @@ package com.exmaple.taskorganizaer.ui.presentation.addTaskScreen
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Save
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import com.example.taskorganizaer.data.models.TaskModel
+import java.time.LocalDateTime
+import java.util.Date
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -18,7 +21,7 @@ fun AddTaskTopBar(
     CenterAlignedTopAppBar(
         title = {
             Text(
-                "Notes",
+                "Creating...",
 //                fontFamily = FontFamily(Font(R.font.playfair_display_regular)),
             )
         },
@@ -31,14 +34,14 @@ fun AddTaskTopBar(
         actions = {
             IconButton(onClick = {
                 if (title.isNotEmpty() || notes.isNotEmpty()){
-                    val taskModel = TaskModel(id = 0, title = title, notes = notes)
+                    val taskModel = TaskModel(id = 0, title = title, notes = notes, dateCreated = LocalDateTime.now())
                     viewModel.insertNote(taskModel)
                     navigateBack()
                 }else{
                     navigateBack()
                 }
             }) {
-                Icon(Icons.Default.Check, //painterResource(id = R.drawable.ic_baseline_check_24),
+                Icon(Icons.Default.Save, //painterResource(id = R.drawable.ic_baseline_check_24),
                     contentDescription = "Add task")
             }
         }

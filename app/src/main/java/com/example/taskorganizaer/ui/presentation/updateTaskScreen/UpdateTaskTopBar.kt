@@ -5,6 +5,7 @@ import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.Save
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -12,6 +13,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import com.example.taskorganizaer.data.models.TaskModel
+import java.time.LocalDateTime
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -21,10 +23,11 @@ fun UpdateTaskTopBar(
     navigateBack: () -> Unit,
     title: String,
     note: String,
+    dateCreated: LocalDateTime
 ) {
     CenterAlignedTopAppBar(
         title = { Text(
-            text = title,
+            text = "Editing...",
 //            fontFamily = FontFamily(Font(R.font.playfair_display_regular)),
         )
         },
@@ -47,12 +50,12 @@ fun UpdateTaskTopBar(
 //                    contentDescription = "Delete task" )
 //            }
             IconButton(onClick = {
-                val updatedTask = TaskModel(taskId, title, note)
+                val updatedTask = TaskModel(taskId, title, note , dateCreated)
                 viewModel.updateTasks(updatedTask)
                 navigateBack()
             }) {
                 Icon(
-                    Icons.Default.Check,
+                    Icons.Default.Save,
                     contentDescription = "save task")
             }
         }
