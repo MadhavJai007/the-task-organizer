@@ -17,6 +17,7 @@ fun AddTaskTopBar(
     navigateBack: () -> Unit,
     title: String,
     notes: String,
+    deadline: LocalDateTime?
 ) {
     CenterAlignedTopAppBar(
         title = {
@@ -34,7 +35,7 @@ fun AddTaskTopBar(
         actions = {
             IconButton(onClick = {
                 if (title.isNotEmpty() || notes.isNotEmpty()){
-                    val taskModel = TaskModel(id = 0, title = title, notes = notes, dateCreated = LocalDateTime.now())
+                    val taskModel = TaskModel(id = 0, title = title, notes = notes, dateCreated = LocalDateTime.now(), dateModified = LocalDateTime.now() , deadline = deadline)
                     viewModel.insertNote(taskModel)
                     navigateBack()
                 }else{

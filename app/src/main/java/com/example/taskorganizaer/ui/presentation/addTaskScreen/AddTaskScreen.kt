@@ -16,8 +16,12 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Event
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -39,6 +43,8 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.taskorganizaer.ui.presentation.components.DeadlinePickerDialog
+import java.time.LocalDateTime
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -48,21 +54,44 @@ fun AddTaskScreen(
     val viewModel: AddTaskViewModel = viewModel()
     var title by remember { mutableStateOf("") }
     var notes by remember { mutableStateOf("") }
+    var deadline: LocalDateTime? by remember { mutableStateOf(null)}
     val focusManager = LocalFocusManager.current
 
     val maxTitleCharLength = 64
     val maxNoteCharLength = 1000
 
+    var showDatePickerDialog by remember { mutableStateOf(false) }
+
     Scaffold(
-        topBar = { AddTaskTopBar(viewModel, navigateBack, title, notes) },
+        topBar = { AddTaskTopBar(viewModel, navigateBack, title, notes, deadline = deadline) },
 //        backgroundColor = colorScheme.surface
         containerColor = MaterialTheme.colorScheme.surface
     ) { padding ->
+
         Surface(
 //            color =colorResource(id = R.color.colorBackground),
 //            shape = RoundedCornerShape(32.dp, 32.dp),
 
         ) {
+
+            if(showDatePickerDialog){
+                if(deadline!= null){
+                    val itsaDate: LocalDateTime = deadline!!
+                    DeadlinePickerDialog(
+                        dismissDialog = { showDatePickerDialog = false },
+                        updateDeadline = { deadline = it },
+                        deadlineDate = itsaDate.toLocalDate(),
+                        deadlineTime = itsaDate.toLocalTime()
+                    )
+                }
+                else {
+                    DeadlinePickerDialog(
+                        dismissDialog = { showDatePickerDialog = false },
+                        updateDeadline = { deadline = it }
+                    )
+                }
+
+            }
             Column(
                 modifier = Modifier
                     .fillMaxSize()
@@ -144,6 +173,22 @@ fun AddTaskScreen(
                         .padding(top = 16.dp, end = 8.dp)
                 ){
                     Row (){
+                        IconButton(onClick = {
+//                            viewModel.updateTasks(updatedTask)
+//                            navigateBack()
+                            showDatePickerDialog = true
+                        }) {
+                            Icon(
+                                Icons.Filled.Event,
+                                contentDescription = "pick deadline")
+                        }
+                        Spacer(modifier = Modifier.weight(1f))
+                        Column {
+                            if (deadline != null) Text(
+                                text = "DEADLINE: ${deadline!!.dayOfMonth} ${deadline!!.month} ${deadline!!.year}, ${deadline!!.hour}:${deadline!!.minute}".trimIndent(),
+                                fontSize = 10.sp
+                            )
+                        }
                         Spacer(modifier = Modifier.weight(1f))
                         Text(
                             text = "${notes.length}/$maxNoteCharLength",

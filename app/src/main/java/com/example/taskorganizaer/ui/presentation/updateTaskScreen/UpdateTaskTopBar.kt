@@ -23,7 +23,9 @@ fun UpdateTaskTopBar(
     navigateBack: () -> Unit,
     title: String,
     note: String,
-    dateCreated: LocalDateTime
+    dateCreated: LocalDateTime,
+    dateCompleted: LocalDateTime?,
+    deadline: LocalDateTime?
 ) {
     CenterAlignedTopAppBar(
         title = { Text(
@@ -50,7 +52,7 @@ fun UpdateTaskTopBar(
 //                    contentDescription = "Delete task" )
 //            }
             IconButton(onClick = {
-                val updatedTask = TaskModel(taskId, title, note , dateCreated)
+                val updatedTask = TaskModel(taskId, title, note , dateCreated, dateModified = LocalDateTime.now(), dateCompleted = dateCompleted, deadline = deadline)
                 viewModel.updateTasks(updatedTask)
                 navigateBack()
             }) {
@@ -61,3 +63,4 @@ fun UpdateTaskTopBar(
         }
     )
 }
+

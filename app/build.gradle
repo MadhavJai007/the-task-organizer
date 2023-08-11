@@ -92,4 +92,8 @@ dependencies {
 
     // material icons
     implementation "androidx.compose.material:material-icons-extended"
+
+    // custom material3 datetime picker
+//    implementation 'com.github.commandiron:WheelPickerCompose:1.1.11'
+    implementation "com.marosseleng.android:compose-material3-datetime-pickers:0.7.2"
 }

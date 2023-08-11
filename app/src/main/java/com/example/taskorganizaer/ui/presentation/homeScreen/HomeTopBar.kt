@@ -1,17 +1,12 @@
 package com.example.taskorganizaer.ui.presentation.homeScreen
 
-import android.graphics.fonts.FontFamily
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.FilterAlt
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Sort
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -37,9 +32,12 @@ import com.example.taskorganizaer.data.models.SortTypes
 @Composable
 fun HomeTopBar(
     navigateToAboutScreen:()-> Unit,
-    homeViewModel: HomeViewModel
+    homeViewModel: HomeViewModel,
+    toggleSortBottomSheet: () -> Unit
 ) {
     var sortMenuExpanded by remember { mutableStateOf(false)}
+
+
     var selectedSort by remember { mutableStateOf(SortTypes.TITLE_ASC) }
     CenterAlignedTopAppBar(
         title = {
@@ -61,18 +59,22 @@ fun HomeTopBar(
             Row(
 
             ) {
+                // TODO: delete this
+                Box(modifier = Modifier){
+                    IconButton(onClick = { }) {
+                        Icon(
+                            Icons.Default.FilterAlt, // id = R.drawable.about),
+                            contentDescription = "Filter menu")
+                    }
+                }
+
+
                 Box(){
-//                    Text(
-//                        text = selectedSort.name,
-//                        modifier = Modifier
-////                            .fillMaxSize()
-////                            .clickable(
-////
-////                            )
-//                    )
+
                     IconButton(
                         onClick = {
-                            sortMenuExpanded = true
+//                            sortMenuExpanded = true
+                            toggleSortBottomSheet()
                         }
                     ){
                         Icon(
@@ -81,21 +83,22 @@ fun HomeTopBar(
                         )
                     }
 
-                    DropdownMenu(
-                        expanded = sortMenuExpanded,
-                        onDismissRequest = { sortMenuExpanded = false },
-
-                    ) {
-                        SortTypes.values().forEachIndexed{index, sortOption ->
-                            DropdownMenuItem(
-                                text = {Text(text = sortOption.displayStr)},
-                                onClick = {
-                                    selectedSort = sortOption
-                                    sortMenuExpanded = false
-                                    homeViewModel.sortTasks(sortOption)
-                                })
-                        }
-                    }
+                    // TODO: delete this
+//                    DropdownMenu(
+//                        expanded = sortMenuExpanded,
+//                        onDismissRequest = { sortMenuExpanded = false },
+//
+//                    ) {
+//                        SortTypes.values().forEachIndexed{index, sortOption ->
+//                            DropdownMenuItem(
+//                                text = {Text(text = sortOption.displayStr)},
+//                                onClick = {
+//                                    selectedSort = sortOption
+//                                    sortMenuExpanded = false
+//                                    homeViewModel.sortAndFilterTasks(sortOption)
+//                                })
+//                        }
+//                    }
                 }
                 IconButton(onClick = {navigateToAboutScreen() }) {
                     Icon(
