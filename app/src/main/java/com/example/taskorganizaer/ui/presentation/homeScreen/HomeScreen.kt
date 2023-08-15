@@ -1,6 +1,7 @@
 package com.example.taskorganizaer.ui.presentation.homeScreen
 
 import android.util.Log
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.spring
@@ -29,6 +30,7 @@ import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.DismissValue
 import androidx.compose.material3.Divider
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -40,18 +42,24 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
+import androidx.compose.material3.SwipeToDismiss
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberDismissState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
@@ -62,6 +70,7 @@ import com.example.taskorganizaer.R
 import com.example.taskorganizaer.data.models.FilterTypes
 import com.example.taskorganizaer.data.models.SortTypes
 import com.example.taskorganizaer.data.models.TaskModel
+import kotlinx.coroutines.launch
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -72,7 +81,8 @@ fun HomeScreen(
     navigateToAboutScreen: () -> Unit,
 ) {
     val homeViewModel: HomeViewModel = viewModel()
-    val tasks = homeViewModel.tasks
+    var tasks = homeViewModel.tasks
+
 
     var sortBottomSheetExpanded by remember { mutableStateOf(false)}
     var selectedSortType by rememberSaveable { mutableStateOf(SortTypes.DATE_MODIFIED_DESC)}
@@ -81,8 +91,8 @@ fun HomeScreen(
     var selectedFilterType by rememberSaveable { mutableStateOf(FilterTypes.SHOW_INCOMPLETE_TASKS)}
 
     LaunchedEffect(Unit) {
-        homeViewModel.sortAndFilterTasks(SortTypes.DATE_MODIFIED_DESC, FilterTypes.SHOW_INCOMPLETE_TASKS)
-        homeViewModel.getAllTasks()
+        homeViewModel.sortAndFilterTasks(selectedSortType, selectedFilterType)
+//        homeViewModel.getAllTasks()
     }
     Scaffold(
         topBar = { HomeTopBar(
@@ -348,6 +358,7 @@ fun ShowTasks() {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TaskCard(
     taskModel: TaskModel,
@@ -360,6 +371,9 @@ fun TaskCard(
 
     val notePreviewMaxLength: Int = 70
 
+    val snackState = remember { SnackbarHostState() }
+    val snackScope = rememberCoroutineScope()
+    SnackbarHost(hostState = snackState, Modifier)
 
     // preview notes expand animation
     val extraPadding by animateDpAsState(
@@ -370,162 +384,196 @@ fun TaskCard(
             stiffness = Spring.StiffnessLow
         )
     )
-    Card(
-        modifier = Modifier
-//            .heightIn(0.dp, 200.dp)
-            .fillMaxWidth()
-            .padding(20.dp, 5.dp)
-            .clickable {
-                navigateToUpdateTaskScreen(taskModel.id)
-                Log.i("HomeScreen", "onCardClicked")
-            },
-//        backgroundColor = MaterialTheme.colorScheme.surface,
-        shape = RoundedCornerShape(18.dp),
-        border = BorderStroke(2.dp, MaterialTheme.colorScheme.secondary),
-        elevation = CardDefaults.cardElevation(
-            defaultElevation = 8.dp,
-//            pressedElevation = 9.dp
-        )
-    ) {
 
-        Column(modifier = Modifier
-            .fillMaxWidth()
-//            .padding(24.dp, 6.dp)
-            .padding(24.dp, extraPadding)
-        ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth(),
-//                horizontalArrangement = Arrangement.SpaceBetween
-//                contentAlignment = Alignment.TopEnd
-            ){
-                Text(
-                    text = "${if (taskModel.title == "") "Untitled" else taskModel.title}",
-                    modifier = Modifier
-                        .padding(top = 6.dp, bottom = 18.dp)
-                        .alpha(if (taskModel.title == "" || taskModel.dateCompleted != null) 0.7f else 1f),
-                    fontSize = 24.sp,
-                    textDecoration = if(taskModel.dateCompleted != null) {
-                        TextDecoration.LineThrough
-                    }else{
-                        TextDecoration.None
-                    }
-//                fontFamily = FontFamily(Font(R.font.playfair_display_regular)),
-
-                )
-
+    val dismissState = rememberDismissState(
+        confirmValueChange = {
+            if (it == DismissValue.DismissedToStart){
+                homeViewModel.deleteTask(taskModel)
+                it != DismissValue.DismissedToStart
             }
-
-            Text(
-                text = if (taskNotesExpanded)
-                    taskModel.notes
+            else {
+                if(taskModel.dateCompleted != null)
+                    homeViewModel.incompleteTask(taskModel)
                 else
-                    if(taskModel.notes.length > notePreviewMaxLength)
-                        taskModel.notes.dropLast(
-                            taskModel.notes.length - notePreviewMaxLength
-                        ) + "..."
-                    else
-                        taskModel.notes ,
-                modifier = Modifier
-                    .padding(bottom = 12.dp),
-//                fontFamily = FontFamily(Font(R.font.plus_jakarta_sans_regular)),
-                lineHeight = 18.sp
-            )
-            Row(
-                modifier = Modifier,
-//                    .background(Color.Magenta)
-//                HorizontalAlignment = Alignment.
-            ){
-
-                Box(
-//                    contentAlignment = Alignment.TopEnd,
-                    modifier = Modifier
-//                        .align(Alignment.TopEnd)
-//                        .weight(1f)
-                ) {
-                    IconButton(onClick = { moreActionsMenuExpanded = true }) {
-                        Icon(
-                            imageVector = Icons.Default.MoreVert,
-                            contentDescription = "Task actions dropdown menu",
-                            modifier = Modifier
-//                                .fillMaxWidth(0.15f)
-
-                        )
-                    }
-                    DropdownMenu(
-                        expanded = moreActionsMenuExpanded,
-                        onDismissRequest = { moreActionsMenuExpanded = false })
-                    {
-                        DropdownMenuItem(
-                            text = {
-                                Text(text = "Delete")
-                            },
-                            onClick = {
-                                homeViewModel.deleteTask(taskModel)
-                                moreActionsMenuExpanded = false
-                            }
-                        )
-                        if(taskModel.dateCompleted != null) {
-                            DropdownMenuItem(
-                                text = {
-                                    Text(text = "Mark as incomplete")
-                                },
-                                onClick = {
-                                    homeViewModel.incompleteTask(taskModel)
-                                    moreActionsMenuExpanded = false
-                                }
-                            )
-                        }else {
-                            DropdownMenuItem(
-                                text = {
-                                    Text(text = "Complete task")
-                                },
-                                onClick = {
-                                    homeViewModel.completeTask(taskModel)
-                                    moreActionsMenuExpanded = false
-                                }
-                            )
-                        }
-
-                    }
-                }
-                Text(
-                    text = if(taskModel.dateModified != null) {
-                        "Last edited: ${taskModel.dateModified.dayOfMonth} ${taskModel.dateModified.month} ${taskModel.dateModified.year}, ${taskModel.dateModified.hour}:${taskModel.dateModified.minute}".trimIndent()
-                    } else {
-                        "Added: ${taskModel.dateCreated.dayOfMonth} ${taskModel.dateCreated.month} ${taskModel.dateCreated.year}, ${taskModel.dateCreated.hour}:${taskModel.dateCreated.minute}".trimIndent()
-                    },
-                    modifier = Modifier
-                        .weight(1f)
-//                            .background(Color.Magenta)
-                        .padding(top = 16.dp)
-                        .fillMaxWidth(0.7f)
-//                        .background(Color.Magenta)
-                    ,
-                    textAlign = TextAlign.Center
-                    ,
-
-                    fontSize = 10.sp,
-
-                )
-                if(taskModel.notes.length > notePreviewMaxLength)
-                    IconButton(
-                        onClick = { taskNotesExpanded = !taskNotesExpanded }
-                    ) {
-                        Icon(
-                            if(taskNotesExpanded) Icons.Default.ExpandLess else Icons.Default.ExpandMore,
-                            contentDescription = "Expand notes section"
-                        )
-                    }
-                else{
-                    Spacer(
-                        modifier = Modifier
-                            .fillMaxWidth(0.15f)
-                    )
-                }
+                    homeViewModel.completeTask(taskModel)
+                it != DismissValue.DismissedToEnd
             }
 
         }
+    )
 
-    }
+    SwipeToDismiss(state = dismissState, background = {
+        val color by animateColorAsState(
+            when (dismissState.targetValue) {
+                DismissValue.Default -> MaterialTheme.colorScheme.background
+                DismissValue.DismissedToEnd -> Color.Green
+                DismissValue.DismissedToStart -> Color.Red
+            }, label = "swiped"
+        )
+        Box(
+            Modifier
+                .fillMaxSize()
+                .background(color))
+    }, dismissContent = {
+        Card(
+            modifier = Modifier
+//            .heightIn(0.dp, 200.dp)
+                .fillMaxWidth()
+                .padding(20.dp, 5.dp)
+                .clickable {
+                    navigateToUpdateTaskScreen(taskModel.id)
+                    Log.i("HomeScreen", "onCardClicked")
+                },
+//        backgroundColor = MaterialTheme.colorScheme.surface,
+            shape = RoundedCornerShape(18.dp),
+            border = BorderStroke(2.dp, MaterialTheme.colorScheme.secondary),
+            elevation = CardDefaults.cardElevation(
+                defaultElevation = 8.dp,
+//            pressedElevation = 9.dp
+            )
+        ) {
+
+            Column(modifier = Modifier
+                .fillMaxWidth()
+//            .padding(24.dp, 6.dp)
+                .padding(24.dp, extraPadding)
+            ) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+//                horizontalArrangement = Arrangement.SpaceBetween
+//                contentAlignment = Alignment.TopEnd
+                ){
+                    Text(
+                        text = "${if (taskModel.title == "") "Untitled" else taskModel.title}",
+                        modifier = Modifier
+                            .padding(top = 6.dp, bottom = 18.dp)
+                            .alpha(if (taskModel.title == "" || taskModel.dateCompleted != null) 0.7f else 1f),
+                        fontSize = 24.sp,
+                        textDecoration = if(taskModel.dateCompleted != null) {
+                            TextDecoration.LineThrough
+                        }else{
+                            TextDecoration.None
+                        }
+//                fontFamily = FontFamily(Font(R.font.playfair_display_regular)),
+
+                    )
+
+                }
+
+                Text(
+                    text = if (taskNotesExpanded)
+                        taskModel.notes
+                    else
+                        if(taskModel.notes.length > notePreviewMaxLength)
+                            taskModel.notes.dropLast(
+                                taskModel.notes.length - notePreviewMaxLength
+                            ) + "..."
+                        else
+                            taskModel.notes ,
+                    modifier = Modifier
+                        .padding(bottom = 12.dp),
+//                fontFamily = FontFamily(Font(R.font.plus_jakarta_sans_regular)),
+                    lineHeight = 18.sp
+                )
+                Row(
+                    modifier = Modifier,
+//                    .background(Color.Magenta)
+//                HorizontalAlignment = Alignment.
+                ){
+
+                    Box(
+//                    contentAlignment = Alignment.TopEnd,
+                        modifier = Modifier
+//                        .align(Alignment.TopEnd)
+//                        .weight(1f)
+                    ) {
+                        IconButton(onClick = { moreActionsMenuExpanded = true }) {
+                            Icon(
+                                imageVector = Icons.Default.MoreVert,
+                                contentDescription = "Task actions dropdown menu",
+                                modifier = Modifier
+//                                .fillMaxWidth(0.15f)
+
+                            )
+                        }
+                        DropdownMenu(
+                            expanded = moreActionsMenuExpanded,
+                            onDismissRequest = { moreActionsMenuExpanded = false })
+                        {
+                            DropdownMenuItem(
+                                text = {
+                                    Text(text = "Delete")
+                                },
+                                onClick = {
+                                    homeViewModel.deleteTask(taskModel)
+                                    moreActionsMenuExpanded = false
+                                }
+                            )
+                            if(taskModel.dateCompleted != null) {
+                                DropdownMenuItem(
+                                    text = {
+                                        Text(text = "Mark as incomplete")
+                                    },
+                                    onClick = {
+                                        homeViewModel.incompleteTask(taskModel)
+                                        moreActionsMenuExpanded = false
+                                    }
+                                )
+                            }else {
+                                DropdownMenuItem(
+                                    text = {
+                                        Text(text = "Complete task")
+                                    },
+                                    onClick = {
+                                        homeViewModel.completeTask(taskModel)
+                                        moreActionsMenuExpanded = false
+                                    }
+                                )
+                            }
+
+                        }
+                    }
+                    Text(
+                        text = if(taskModel.dateModified != null) {
+                            "Last edited: ${taskModel.dateModified.dayOfMonth} ${taskModel.dateModified.month} ${taskModel.dateModified.year}, ${taskModel.dateModified.hour}:${taskModel.dateModified.minute}".trimIndent()
+                        } else {
+                            "Added: ${taskModel.dateCreated.dayOfMonth} ${taskModel.dateCreated.month} ${taskModel.dateCreated.year}, ${taskModel.dateCreated.hour}:${taskModel.dateCreated.minute}".trimIndent()
+                        },
+                        modifier = Modifier
+                            .weight(1f)
+//                            .background(Color.Magenta)
+                            .padding(top = 16.dp)
+                            .fillMaxWidth(0.7f)
+//                        .background(Color.Magenta)
+                        ,
+                        textAlign = TextAlign.Center
+                        ,
+
+                        fontSize = 10.sp,
+
+                        )
+                    if(taskModel.notes.length > notePreviewMaxLength)
+                        IconButton(
+                            onClick = { taskNotesExpanded = !taskNotesExpanded }
+                        ) {
+                            Icon(
+                                if(taskNotesExpanded) Icons.Default.ExpandLess else Icons.Default.ExpandMore,
+                                contentDescription = "Expand notes section"
+                            )
+                        }
+                    else{
+                        Spacer(
+                            modifier = Modifier
+                                .fillMaxWidth(0.15f)
+                        )
+                    }
+                }
+
+            }
+
+        }
+    })
+
+
 }
