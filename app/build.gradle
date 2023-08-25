@@ -6,11 +6,11 @@ plugins {
 }
 
 android {
-    namespace 'com.example.taskorganizaer'
+    namespace 'com.example.taskorganizer'
     compileSdk 33
 
     defaultConfig {
-        applicationId 'com.example.taskorganizaer'
+        applicationId 'com.mjdev.taskorganizer'
         minSdk 26
         targetSdk 33
         versionCode 1

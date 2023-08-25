@@ -1,7 +1,7 @@
 # Task organizer
-## A Simple Task organizer
 
-
+A simple task organizer app to create and manage tasks. Choose whether you want your tasks to have a deadline or not and when you should get them done by.
+Designed with Jetpack Compose and Material 3 conventions, the app should be visually consistent with the rest of your device's themes on Android 13 and later.
 
 
 # Screenshots
