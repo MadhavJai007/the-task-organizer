@@ -31,7 +31,7 @@ jobs:
         run: echo Hello World!
 
       - name: run multi line scripts
-        run:
+        run: |
           echo Add other actions
           echo test, deploy your project
 
