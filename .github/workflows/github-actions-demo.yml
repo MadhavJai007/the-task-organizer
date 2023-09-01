@@ -41,6 +41,9 @@ jobs:
       - name: Checkout codebase
         uses: actions/checkout@v3
 
+      - name: Change gradle wrapper permissions
+        run: chmod +x ./gradlew
+
       - name: Run Lint
         run: ./gradlew lintDebug
 
