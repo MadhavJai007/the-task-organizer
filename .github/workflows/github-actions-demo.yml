@@ -51,7 +51,7 @@ jobs:
         run: chmod +x ./gradlew
 
       - name: Run Lint
-        run: ./gradlew lintDebug --stacktrace
+        run: ./gradlew lintDebug --info
 
       - name: Upload html lint reports
         uses: actions/upload-artifact@v3
