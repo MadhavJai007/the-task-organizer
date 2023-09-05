@@ -50,8 +50,11 @@ jobs:
       - name: Change gradle wrapper permissions
         run: chmod +x ./gradlew
 
+      - name: Run Gradle build
+        run: ./gradlew build
+
       - name: Run Lint
-        run: ./gradlew lintDebug --info
+        run: ./gradlew lint
 
       - name: Upload html lint reports
         uses: actions/upload-artifact@v3
