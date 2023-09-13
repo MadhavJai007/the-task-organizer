@@ -1,138 +1,182 @@
-name: GitHub Actions master branch workflow
-run-name: ${{ github.actor }} is building a new release version
-on:
-  push:
-    branches: [master]
-  pull_request:
-    branches: [master]
-jobs:
-  lint:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout codebase
-        uses: actions/checkout@v3
+#name: Build Release APK
+#
+#on:
+#  workflow_dispatch:
+#
+#jobs:
+#  build:
+#
+#    runs-on: ubuntu-latest
+#
+#    steps:
+#      - uses: actions/checkout@v3
+#      - name: set up JDK 17
+#        uses: actions/setup-java@v3
+#        with:
+#          java-version: '17'
+#          distribution: 'temurin'
+#          cache: gradle
+#
+#      - name: Setup Android SDK
+#        uses: android-actions/setup-android@v2
+#
+#      - uses: gradle/gradle-build-action@v2
+#      - run: gradle assembleRelease
+#
+##      - uses: ilharp/sign-android-release@v1
+##        name: Sign app APK
+##        id: sign_app
+##        with:
+##          releaseDir: app/build/outputs/apk/release
+##          signingKey: ${{ secrets.SIGNING_KEY }}
+##          keyAlias: ${{ secrets.ALIAS }}
+##          keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
+##          keyPassword: ${{ secrets.KEY_PASSWORD }}
+##          buildToolsVersion: 33.0.0
+#
+#      - uses: actions/upload-artifact@v3
+#        with:
+#          name: Signed apks
+#          path: app/build/outputs/apk/release/*-arm64-v8a-release-signed.apk
 
-      - name: Set up JDK 17
-        uses: actions/setup-java@v3
-        with:
-          distribution: 'adopt'
-          java-version: '17'
-
-      - name: Change gradle wrapper permissions
-        run: chmod +x ./gradlew
-
-      - name: Run Lint
-        run: ./gradlew lintDebug
-
-      - name: Upload html lint reports
-        uses: actions/upload-artifact@v3
-        with:
-          name: index.html
-          path: app/build/reports/lint-results-debug.html
-
-  build:
-    name: generate apk
-    runs-on: ubuntu-latest
-    steps:
-      - name: checkout the code
-        uses: actions/checkout@v3
-
-      - name: Set up JDK 17
-        uses: actions/setup-java@v3
-        with:
-          distribution: 'adopt'
-          java-version: '17'
-
-      - name: Change gradle wrapper permissions
-        run: chmod +x ./gradlew
-
-      - name: Assemble debug
-        run: ./gradlew assembleRelease
-
-      - name: Upload apk
-        uses: actions/upload-artifact@v3
-        with:
-          name: app-release-unsigned
-          path: app/build/outputs/apk/release/app-release-unsigned.apk
-
-  release:
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - name: checkout the code
-        uses: actions/checkout@v3
-
-      - name: Set Version
-        id: set_version
-        run: echo "::set-output name=version::v$(date +'%Y.%m.%d.%H%M%S')"
-
-      - name: create release
-        id: create_release
-        uses: actions/create-release@v1
-        with:
-          files: |
-            ./app/build/outputs/apk/release/app-release.apk
-          token: ${{ secrets.APK_BUILD_TOKEN }}
-          tag_name: v0.1.${{ github.run_number }}
-#          ${{ steps.set_version.outputs.version }}
-          release_name: Release v0.1.${{ github.run_number }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.APK_BUILD_TOKEN }}
-
-
-
-      - name: Update Release with APK
-        uses: softprops/action-gh-release@v1
-        with:
-          files: |
-            ./app/build/outputs/apk/release/app-release-unsigned.apk
-          draft: false
-          prerelease: false
-          tag_name: v0.1.${{ github.run_number }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.APK_BUILD_TOKEN }}
-
-#  release:
-#    name: release apk
+#name: GitHub Actions master branch workflow
+#run-name: ${{ github.actor }} is building a new release version
+#on:
+#  push:
+#    branches: [master]
+#  pull_request:
+#    branches: [master]
+#jobs:
+#  lint:
 #    runs-on: ubuntu-latest
 #    steps:
-#      - name: Checkout code
-#        uses: actions/checkout@v2
-#      - name: Build project
-#        run: |
-#          mkdir -p app/build/outputs/apk/release
-#          echo hello > app/build/outputs/apk/release/app-release-unsigned.apk
-#      - name: Release with Notes
-#        uses: softprops/action-gh-release@v1
+#      - name: Checkout codebase
+#        uses: actions/checkout@v3
+#
+#      - name: Set up JDK 17
+#        uses: actions/setup-java@v3
 #        with:
-#          files: app/build/outputs/apk/release/app-release-unsigned.apk
-#        env:
-#          GITHUB_TOKEN: ${{ secrets.APK_BUILD_TOKEN }}
-#  release:
-#    name: Release APK
-#    needs: package
+#          distribution: 'adopt'
+#          java-version: '17'
+#
+#      - name: Change gradle wrapper permissions
+#        run: chmod +x ./gradlew
+#
+#      - name: Run Lint
+#        run: ./gradlew lintDebug
+#
+#      - name: Upload html lint reports
+#        uses: actions/upload-artifact@v3
+#        with:
+#          name: index.html
+#          path: app/build/reports/lint-results-debug.html
+#
+#  build:
+#    name: generate apk
 #    runs-on: ubuntu-latest
 #    steps:
-#      - name: Download APK from build
-#        uses: actions/download-artifact@v3
+#      - name: checkout the code
+#        uses: actions/checkout@v3
+#
+#      - name: Set up JDK 17
+#        uses: actions/setup-java@v3
 #        with:
-#          name: task-organizer.apk
-#      - name: Create Release
+#          distribution: 'adopt'
+#          java-version: '17'
+#
+#      - name: Change gradle wrapper permissions
+#        run: chmod +x ./gradlew
+#
+#      - name: Setup Android SDK
+#        uses: android-actions/setup-android@v2
+#
+#      - name: Assemble release
+#        run: ./gradlew assembleRelease
+#
+#      - name: Upload apk
+#        uses: actions/upload-artifact@v3
+#        with:
+#          name: app-release-unsigned
+#          path: app/build/outputs/apk/release/app-release-unsigned.apk
+#
+#  release:
+#    needs: build
+#    runs-on: ubuntu-latest
+#    steps:
+#      - name: checkout the code
+#        uses: actions/checkout@v3
+#
+#      - name: Set Version
+#        id: set_version
+#        run: echo "::set-output name=version::v$(date +'%Y.%m.%d.%H%M%S')"
+#
+#      - name: create release
 #        id: create_release
 #        uses: actions/create-release@v1
+#        with:
+#          files: |
+#            ./app/build/outputs/apk/release/app-release.apk
+#          token: ${{ secrets.APK_BUILD_TOKEN }}
+#          tag_name: v0.1.${{ github.run_number }}
+##          ${{ steps.set_version.outputs.version }}
+#          release_name: Release v0.1.${{ github.run_number }}
 #        env:
 #          GITHUB_TOKEN: ${{ secrets.APK_BUILD_TOKEN }}
+#
+#
+#
+#      - name: Update Release with APK
+#        uses: softprops/action-gh-release@v1
 #        with:
-#          tag_name: ${{ github.run_number }}
-#          release_name: ${{ github.event.repository.name }} v0.1.${{ github.run_number }}
-#      - name: Upload Release APK
-#        id: upload_release_asset
-#        uses: actions/upload-release-asset@v1.0.2
+#          files: |
+#            ./app/build/outputs/apk/release/app-release-unsigned.apk
+#          draft: false
+#          prerelease: false
+#          tag_name: v0.1.${{ github.run_number }}
 #        env:
 #          GITHUB_TOKEN: ${{ secrets.APK_BUILD_TOKEN }}
-#        with:
-#          upload_url: ${{ steps.create_release.outputs.upload_url }}
-#          asset_path: task-organizer.apk
-#          asset_name: task-organizer.apk
-#          asset_content_type: application/zip
-
+#
+##  release:
+##    name: release apk
+##    runs-on: ubuntu-latest
+##    steps:
+##      - name: Checkout code
+##        uses: actions/checkout@v2
+##      - name: Build project
+##        run: |
+##          mkdir -p app/build/outputs/apk/release
+##          echo hello > app/build/outputs/apk/release/app-release-unsigned.apk
+##      - name: Release with Notes
+##        uses: softprops/action-gh-release@v1
+##        with:
+##          files: app/build/outputs/apk/release/app-release-unsigned.apk
+##        env:
+##          GITHUB_TOKEN: ${{ secrets.APK_BUILD_TOKEN }}
+##  release:
+##    name: Release APK
+##    needs: package
+##    runs-on: ubuntu-latest
+##    steps:
+##      - name: Download APK from build
+##        uses: actions/download-artifact@v3
+##        with:
+##          name: task-organizer.apk
+##      - name: Create Release
+##        id: create_release
+##        uses: actions/create-release@v1
+##        env:
+##          GITHUB_TOKEN: ${{ secrets.APK_BUILD_TOKEN }}
+##        with:
+##          tag_name: ${{ github.run_number }}
+##          release_name: ${{ github.event.repository.name }} v0.1.${{ github.run_number }}
+##      - name: Upload Release APK
+##        id: upload_release_asset
+##        uses: actions/upload-release-asset@v1.0.2
+##        env:
+##          GITHUB_TOKEN: ${{ secrets.APK_BUILD_TOKEN }}
+##        with:
+##          upload_url: ${{ steps.create_release.outputs.upload_url }}
+##          asset_path: task-organizer.apk
+##          asset_name: task-organizer.apk
+##          asset_content_type: application/zip
+#
