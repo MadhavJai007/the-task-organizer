@@ -55,22 +55,22 @@ jobs:
           name: task-organizer.apk
           path: app/build/outputs/apk/release/app-release-unsigned.apk
 
-  release:
-    name: release apk
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-      - name: Build project
-        run: |
-          mkdir -p app/build/outputs/apk/release
-          echo hello > app/build/outputs/apk/release/app-release-unsigned.apk
-      - name: Release with Notes
-        uses: softprops/action-gh-release@v1
-        with:
-          files: app/build/outputs/apk/release/app-release-unsigned.apk
-        env:
-          GITHUB_TOKEN: ${{ secrets.APK_BUILD_TOKEN }}
+#  release:
+#    name: release apk
+#    runs-on: ubuntu-latest
+#    steps:
+#      - name: Checkout code
+#        uses: actions/checkout@v2
+#      - name: Build project
+#        run: |
+#          mkdir -p app/build/outputs/apk/release
+#          echo hello > app/build/outputs/apk/release/app-release-unsigned.apk
+#      - name: Release with Notes
+#        uses: softprops/action-gh-release@v1
+#        with:
+#          files: app/build/outputs/apk/release/app-release-unsigned.apk
+#        env:
+#          GITHUB_TOKEN: ${{ secrets.APK_BUILD_TOKEN }}
 #  release:
 #    name: Release APK
 #    needs: package
