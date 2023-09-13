@@ -49,8 +49,8 @@ jobs:
 #          distribution: 'adopt'
 #          java-version: '17'
 #
-#      - name: Change gradle wrapper permissions
-#        run: chmod +x ./gradlew
+      - name: Change gradle wrapper permissions
+        run: chmod +x ./gradlew
 
       - name: Assemble debug
         run: ./gradlew assembleDebug
