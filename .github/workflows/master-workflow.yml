@@ -62,6 +62,10 @@ jobs:
       - name: checkout the code
         uses: actions/checkout@v3
 
+      - name: Set Version
+        id: set_version
+        run: echo "::set-output name=version::v$(date +'%Y.%m.%d.%H%M%S')"
+
       - name: create release
         id: create_release
         uses: actions/create-release@v1
@@ -69,13 +73,12 @@ jobs:
           files: |
             ./app/build/outputs/apk/release/app-release.apk
           token: ${{ secrets.APK_BUILD_TOKEN }}
-          tag_name: v0.1.${{ github.run_number }}
+          tag_name: ${{ steps.set_version.outputs.version }}
+          release_name: Release ${{ steps.set_version.outputs.version }}
         env:
           GITHUB_TOKEN: ${{ secrets.APK_BUILD_TOKEN }}
 
-#      - name: Set Release Version
-#        id: set_version
-#        run: echo "RELEASE_VERSION=$(date +'%Y%m%d%H%M%S')" >> $GITHUB_ENV
+
 
       - name: Update Release with APK
         uses: softprops/action-gh-release@v1
