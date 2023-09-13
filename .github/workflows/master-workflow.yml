@@ -69,7 +69,7 @@ jobs:
       - name: Download APK from build
         uses: actions/download-artifact@v3
         with:
-          name: apk
+          name: task-organizer.apk
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
