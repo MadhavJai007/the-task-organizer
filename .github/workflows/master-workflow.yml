@@ -40,15 +40,15 @@ jobs:
     name: generate apk
     runs-on: ubuntu-latest
     steps:
-#      - name: checkout the code
-#        uses: actions/checkout@v3
-#
-#      - name: Set up JDK 17
-#        uses: actions/setup-java@v3
-#        with:
-#          distribution: 'adopt'
-#          java-version: '17'
-#
+      - name: checkout the code
+        uses: actions/checkout@v3
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'adopt'
+          java-version: '17'
+
       - name: Change gradle wrapper permissions
         run: chmod +x ./gradlew
 
