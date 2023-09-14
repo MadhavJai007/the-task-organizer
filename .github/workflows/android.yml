@@ -50,7 +50,7 @@ jobs:
           name: Release v0.1.${{ github.run_number }}
           draft: false
           prerelease: false
-          files: app-release-unsigned/app-release-unsigned.apk
+          files: app-release-unsigned.apk
 
 #      - name: Update git tag
 #        run: |
