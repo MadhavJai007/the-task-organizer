@@ -1,9 +1,10 @@
 name: Android release
 
 on:
+  pull_request:
+    branches: [ "master" ]
   push:
-    branches: [ master ]
-
+    branches: ["master"]
 jobs:
   build:
     name: Build APK
@@ -28,8 +29,8 @@ jobs:
       - name: Upload a Build Artifact
         uses: actions/upload-artifact@v3.1.3
         with:
-          name: app-release.apk
-          path: app/build/outputs/apk/release/app-release.apk
+          name: app-release-unsigned.apk
+          path: app/build/outputs/apk/release/app-release-unsigned.apk
 
   release:
     name: Release APK
@@ -39,7 +40,7 @@ jobs:
       - name: Download APK artifact
         uses: actions/download-artifact@v3.0.2
         with:
-          name: app-release
+          name: app-release-unsigned
       - name: Create release
         id: create_release
         uses: softprops/action-gh-release@v0.1.15
@@ -50,7 +51,7 @@ jobs:
           name: Release v0.1.${{ github.run_number }}
           draft: false
           prerelease: false
-          files: app-release.apk
+          files: app-release-unsigned.apk
 
 #      - name: Update git tag
 #        run: |
