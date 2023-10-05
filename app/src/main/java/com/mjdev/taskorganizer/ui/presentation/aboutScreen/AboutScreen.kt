@@ -60,7 +60,7 @@ fun AboutScreen(
                 verticalArrangement = Arrangement.Bottom
             ) {
                 Image(
-                    painter = painterResource(R.drawable.ic_launcher_foreground),
+                    painter = painterResource(R.drawable.ic_launcher_foreground2),
                     contentDescription = "logo",
                 )
                 Spacer(modifier = Modifier.height(20.dp))

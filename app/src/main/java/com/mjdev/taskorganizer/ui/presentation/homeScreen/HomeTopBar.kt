@@ -48,7 +48,7 @@ fun HomeTopBar(
         },
         navigationIcon = {
             Image(
-                painter = painterResource(id = R.drawable.ic_launcher_foreground),
+                painter = painterResource(id = R.drawable.ic_launcher_foreground2),
                 contentDescription = "logo",
                 modifier = Modifier
                     .width(100.dp)

@@ -360,7 +360,7 @@ fun ShowTasks() {
         .fillMaxSize()
         .padding(0.dp, 120.dp, 0.dp, 0.dp)) {
         Image(
-            painter = painterResource(id = R.drawable.ic_launcher_foreground), //painter = painterResource(id = R.drawable.img),
+            painter = painterResource(id = R.drawable.ic_launcher_foreground2), //painter = painterResource(id = R.drawable.img),
             contentDescription = "empty",
             modifier = Modifier.fillMaxWidth(),
             alignment = Alignment.Center
