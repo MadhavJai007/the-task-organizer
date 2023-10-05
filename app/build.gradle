@@ -13,8 +13,8 @@ android {
         applicationId 'com.mjdev.taskorganizer'
         minSdk 26
         targetSdk 33
-        versionCode 3
-        versionName "1.4"
+        versionCode 4
+        versionName "1.5"
         setProperty("archivesBaseName", "Task-organizer")
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
